@@ -4,9 +4,327 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Hello World</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --accent:#ffd700; /* gold */
+      --accent-dark:#ffb700;
+      --player:#ffffff;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(circle at 10% 10%, #071126 0%, var(--bg) 50%);
+      color: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem;
+      box-sizing:border-box;
+    }
+
+    .card{
+      width:100%;
+      max-width:900px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:2rem;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+      text-align:center;
+    }
+
+    h1{
+      margin:0 0 1rem 0;
+      font-size:clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight:700;
+      text-transform:none;
+      color:var(--accent);
+      letter-spacing:0.02em;
+    }
+
+    p.lead{
+      margin:0 0 1.6rem 0;
+      color:#cfd8ff;
+      opacity:0.9;
+    }
+
+    /* Stage for animation */
+    .stage{
+      position:relative;
+      height:300px;
+      margin-top:1rem;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      overflow:visible;
+    }
+
+    /* simple player (SVG-like using divs) */
+    .player{
+      --size:120px;
+      width:var(--size);
+      height:var(--size);
+      position:relative;
+      transform-origin:50% 85%;
+      display:inline-block;
+      cursor:pointer;
+    }
+
+    /* head */
+    .player .head{
+      width:30%;
+      height:30%;
+      border-radius:50%;
+      background:var(--player);
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top:6%;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4) inset;
+    }
+    /* body */
+    .player .body{
+      width:18%;
+      height:36%;
+      background:var(--player);
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top:36%;
+      border-radius:6px;
+    }
+    /* arms */
+    .player .arm{
+      width:48%;
+      height:10%;
+      background:var(--player);
+      position:absolute;
+      top:44%;
+      border-radius:6px;
+    }
+    .player .arm.left{ left:-4%; transform-origin:100% 50%; transform:rotate(-18deg); }
+    .player .arm.right{ right:-4%; transform-origin:0% 50%; transform:rotate(18deg); }
+
+    /* legs */
+    .player .leg{
+      width:12%;
+      height:40%;
+      background:var(--player);
+      position:absolute;
+      bottom:0;
+      border-radius:6px;
+      transform-origin:top center;
+    }
+    .player .leg.left{ left:42%; transform:rotate(6deg); }
+    .player .leg.right{ right:42%; transform:rotate(-6deg); }
+
+    /* shadow */
+    .shadow{
+      width:70%;
+      height:12px;
+      background:linear-gradient(90deg, rgba(0,0,0,0.45), rgba(0,0,0,0.2));
+      border-radius:999px;
+      position:absolute;
+      bottom:8px;
+      left:50%;
+      transform:translateX(-50%);
+      filter:blur(6px);
+      transform-origin:center;
+    }
+
+    /* shout text */
+    .shout{
+      position:absolute;
+      left:50%;
+      top:8%;
+      transform:translateX(-50%) translateY(20px) scale(0.8);
+      color:var(--accent);
+      font-weight:900;
+      font-size:clamp(2rem, 6vw, 4.2rem);
+      text-shadow: 0 6px 18px rgba(255,190,0,0.16);
+      opacity:0;
+      pointer-events:none;
+    }
+
+    /* confetti pieces */
+    .confetti{
+      position:absolute;
+      bottom:20%;
+      left:50%;
+      pointer-events:none;
+    }
+    .confetti span{
+      position:absolute;
+      width:10px;
+      height:14px;
+      border-radius:2px;
+      opacity:0.95;
+      transform-origin:center;
+      animation:confetti-fall 1400ms linear infinite;
+    }
+
+    /* Animations */
+    @keyframes jump {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-120px) rotate(-20deg); }
+      45% { transform: translateY(-160px) rotate(40deg); }
+      60% { transform: translateY(-120px) rotate(20deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes shout-scale {
+      0% { opacity:0; transform: translateX(-50%) translateY(20px) scale(0.8); filter:blur(2px); }
+      30% { opacity:1; transform: translateX(-50%) translateY(-10px) scale(1.16); filter:blur(0); }
+      70% { opacity:1; transform: translateX(-50%) translateY(-30px) scale(1.04); }
+      100%{ opacity:0; transform: translateX(-50%) translateY(-60px) scale(0.9); }
+    }
+
+    @keyframes shadow-scale {
+      0% { transform: translateX(-50%) scaleX(1); opacity:0.6; }
+      30% { transform: translateX(-50%) scaleX(0.6); opacity:0.9; }
+      60% { transform: translateX(-50%) scaleX(0.6); opacity:0.8; }
+      100% { transform: translateX(-50%) scaleX(1); opacity:0.6; }
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity:1; }
+      100% { transform: translateY(120vh) rotate(720deg); opacity:0; }
+    }
+
+    /* active state classes */
+    .active .player{ animation: jump 1100ms cubic-bezier(.22,.9,.32,1) forwards; }
+    .active .shout{ animation: shout-scale 1100ms cubic-bezier(.22,.9,.32,1) forwards; }
+    .active .shadow{ animation: shadow-scale 1100ms cubic-bezier(.22,.9,.32,1) forwards; }
+    .active .confetti span{ animation-play-state:running; }
+
+    /* confetti initial state paused */
+    .confetti span{ animation-play-state:paused; }
+
+    /* reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .player, .shout, .confetti span, .shadow { animation: none !important; transform:none !important; opacity:1 !important; }
+    }
+
+    /* small screens */
+    @media (max-width:420px){
+      .stage{ height:240px; }
+      .player{ --size:90px; }
+      .shout{ font-size:2.4rem; }
+    }
+
+    /* hint */
+    .hint{
+      margin-top:1rem;
+      font-size:0.85rem;
+      color:#bec9ff;
+      opacity:0.8;
+    }
+
+    /* button look (invisible but accessible) */
+    .sr-only{
+      position: absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0 0 0 0);
+      border:0;
+    }
+
+  </style>
 </head>
 <body>
-  <h1>Hello Taha</h1>
-  <p>Meine erste Erfahrubg im Cloud.</p>
+  <div class="card" role="main">
+    <h1>ronaldo ist der goat und Messi nicht</h1>
+    <p class="lead">Meine erste Erfahrubg im Cloud. Hier zusätzlich ein kleiner SIUU Jubel für CR7.</p>
+
+    <div class="stage" aria-hidden="false">
+      <div class="player" id="player" role="button" tabindex="0" aria-pressed="false" aria-label="CR7 Jubel auslösen">
+        <div class="head" aria-hidden="true"></div>
+        <div class="body" aria-hidden="true"></div>
+        <div class="arm left" aria-hidden="true"></div>
+        <div class="arm right" aria-hidden="true"></div>
+        <div class="leg left" aria-hidden="true"></div>
+        <div class="leg right" aria-hidden="true"></div>
+      </div>
+
+      <div class="shadow" id="shadow" aria-hidden="true"></div>
+
+      <div class="shout" id="shout" aria-hidden="true">SIUU!</div>
+
+      <div class="confetti" id="confetti" aria-hidden="true"></div>
+    </div>
+
+    <p class="hint">Klicke auf den Spieler (oder drücke Enter/Leertaste), um den SIUU Jubel abzuspielen.</p>
+    <button class="sr-only" id="trigger">Trigger</button>
+  </div>
+
+  <script>
+    (function(){
+      const player = document.getElementById('player');
+      const stage = document.querySelector('.stage');
+      const confettiContainer = document.getElementById('confetti');
+      const shout = document.getElementById('shout');
+
+      // Create confetti pieces programmatically with varied colors and delays
+      const colors = ['#ffd700','#ff6b6b','#7bf1a8','#4d9cff','#ffb86b','#c77bff'];
+      const pieces = 18;
+      for(let i=0;i<pieces;i++){
+        const el = document.createElement('span');
+        el.style.left = (Math.random()*160 - 80) + '%'; // spread horizontally
+        el.style.background = colors[i % colors.length];
+        el.style.width = (6 + Math.random()*10) + 'px';
+        el.style.height = (8 + Math.random()*12) + 'px';
+        el.style.borderRadius = (Math.random()>0.5? '2px' : '50%');
+        // randomized animation delay and duration
+        const delay = (Math.random()*200) + 'ms';
+        const duration = (1000 + Math.random()*1000) + 'ms';
+        el.style.animationDelay = delay;
+        el.style.animationDuration = duration;
+        el.style.top = (Math.random()*-40) + 'px';
+        confettiContainer.appendChild(el);
+      }
+
+      // Trigger function
+      function trigger() {
+        // If user prefers reduced motion, skip animation
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if(reduce) {
+          // brief visual cue only
+          shout.style.opacity = '1';
+          setTimeout(()=> shout.style.opacity='0', 900);
+          return;
+        }
+
+        // add active class to stage to start CSS animations
+        stage.classList.remove('active'); // reset
+        // force reflow to restart animations
+        // eslint-disable-next-line no-unused-expressions
+        void stage.offsetWidth;
+        stage.classList.add('active');
+
+        // For screen readers, announce
+        shout.setAttribute('aria-live','polite');
+
+        // Toggle aria-pressed for the button semantics
+        const pressed = player.getAttribute('aria-pressed') === 'true';
+        player.setAttribute('aria-pressed', String(!pressed));
+      }
+
+      player.addEventListener('click', trigger);
+      player.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          trigger();
+        }
+      });
+
+      // Optional: play once on load (commented out)
+      // window.addEventListener('load', () => setTimeout(trigger, 600));
+
+    })();
+  </script>
 </body>
 </html>
