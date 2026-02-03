@@ -1,56 +1,192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Seite mit Ronaldo Hintergrund</title>
+  <title>Cristiano Ronaldo ist der GOAT</title>
+
+  <!-- Google Font (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
   <style>
-    /* Hintergrundbild: entweder lokale Datei 'images/cr7.jpg' oder externe URL einsetzen */
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      /* Beispiel: lokale Datei */
-      /* background-image: url('images/cr7.jpg'); */
-      /* Oder externe Bild-URL (ersetze durch eine echte URL): */
-      /* background-image: url('https://example.com/path/to/cr7.jpg'); */
+    :root{
+      /* Ersetze hier den Pfad/URL zum Hintergrundbild (standard: ronaldo.jpg) */
+      --bg-url: url('ronaldo.jpg');
+      --accent: #ffd700; /* gold */
+      --accent-dark: #ffb700;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Anton", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #000;
+      overflow:hidden;
+    }
+
+    /* großes Hintergrundbild mit dunklem Overlay für bessere Lesbarkeit */
+    .bg{
+      position:fixed;
+      inset:0;
+      background-image: var(--bg-url);
       background-size: cover;
       background-position: center;
-      background-attachment: fixed;
-      min-height: 100vh;
+      filter: saturate(105%) contrast(1.05);
+      z-index:0;
+    }
+    .bg::after{
+      content:'';
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
+    }
+
+    .center{
+      position:relative;
+      z-index:2;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:2rem;
       color: white;
+      pointer-events: none;
     }
 
-    /* halbtransparenter Overlay, damit Text lesbar bleibt */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35); /* bei Bedarf Alpha anpassen */
-      z-index: 0;
+    h1{
+      margin:0;
+      font-size: clamp(2.5rem, 8vw, 7rem);
+      letter-spacing:0.02em;
+      color: var(--accent);
+      text-shadow:
+        0 2px 0 rgba(0,0,0,0.6),
+        0 8px 40px rgba(255,215,0,0.12);
+      transform: translateY(-0.5rem);
     }
 
-    .content {
-      position: relative;
-      z-index: 1;
-      padding: 3rem;
-      text-align: center;
+    h2{
+      margin: 0.6rem 0 0;
+      font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+      color: #fff;
+      opacity:0.95;
+      text-shadow: 0 3px 14px rgba(0,0,0,0.6);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-weight:600;
     }
 
-    h1 {
-      font-size: 3rem;
-      margin: 0;
-      text-transform: none; /* Groß-/Kleinschreibung wie gewünscht */
+    /* SIUUU animation element */
+    .siuu {
+      position:fixed;
+      left:50%;
+      transform: translateX(-50%);
+      bottom:-10vh;
+      font-size: clamp(1.6rem, 6vw, 5rem);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing:0.06em;
+      padding: 0.2rem 0.8rem;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius: 0.5rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.08);
+      popin: none;
+      pointer-events: none;
+      z-index:3;
+      animation: siuuAnim 2.2s ease-in-out infinite;
+    }
+
+    /* stagger mehrere siuu-Elemente (falls erstellt) */
+    .siuu.delay-1{ animation-delay: 0.5s; }
+    .siuu.delay-2{ animation-delay: 1s; }
+    .siuu.delay-3{ animation-delay: 1.6s; }
+
+    @keyframes siuuAnim {
+      0%{
+        transform: translateX(-50%) translateY(60vh) scale(0.6) rotate(-18deg);
+        opacity:0;
+        filter: blur(4px);
+      }
+      10%{
+        opacity:1;
+        filter: blur(0);
+      }
+      40%{
+        transform: translateX(-50%) translateY(0) scale(1.25) rotate(3deg);
+        text-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255,215,0,0.25);
+      }
+      70%{
+        transform: translateX(-50%) translateY(-18vh) scale(1) rotate(0);
+      }
+      100%{
+        transform: translateX(-50%) translateY(-50vh) scale(0.8) rotate(8deg);
+        opacity:0;
+        filter: blur(4px);
+      }
+    }
+
+    /* kleiner Call-to-action unten rechts zum auslösen (optional) */
+    .trigger{
+      position:fixed;
+      right:1rem;
+      bottom:1rem;
+      z-index:5;
+      background: rgba(0,0,0,0.45);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding:0.5rem 0.8rem;
+      border-radius: 0.5rem;
+      cursor:pointer;
+      pointer-events:auto;
+      font-weight:700;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    /* responsive tweaks */
+    @media (max-width:520px){
+      h2{ font-size: 1.1rem; }
+      .trigger{ font-size:0.9rem; padding:0.45rem 0.7rem; }
     }
   </style>
 </head>
 <body>
-  <div class="overlay"></div>
+  <div class="bg" aria-hidden="true"></div>
 
-  <main class="content">
-    <!-- Hier wurde der Text geändert -->
-    <h1>Ronaldo ist der GOAT</h1>
+  <div class="center" role="main">
+    <h1>Cristiano Ronaldo ist der GOAT</h1>
+    <h2>Messi ist nicht der Goat</h2>
+  </div>
 
-    <!-- Beispiel weiterer Inhalt -->
-    <p>Willkommen auf meiner Seite.</p>
-  </main>
+  <!-- standardmäßig ein SIUUU-Element, weitere werden per Klick erzeugt -->
+  <div class="siuu" aria-hidden="true">Siuuu!</div>
+
+  <button class="trigger" id="spawnBtn" title="Mehr SIUUU!">SIUUU!</button>
+
+  <script>
+    // Erzeuge on-demand weitere "siuu" Elemente beim Klick
+    const btn = document.getElementById('spawnBtn');
+    btn.addEventListener('click', spawnSiuu);
+
+    function spawnSiuu(){
+      const el = document.createElement('div');
+      el.className = 'siuu delay-' + (Math.floor(Math.random()*3)+1);
+      el.textContent = 'Siuuu!';
+      // zufällige horizontale Position leicht verschoben
+      el.style.left = (45 + Math.random()*10) + '%';
+      document.body.appendChild(el);
+
+      // entferne nach Ende der Animation (~2300ms)
+      setTimeout(()=> {
+        el.remove();
+      }, 2500);
+    }
+
+    // Optional: Erzeuge automatisch gelegentlich SIUUU
+    setInterval(()=> {
+      // kleine Chance, damit es nicht zu oft ist
+      if(Math.random() > 0.7) spawnSiuu();
+    }, 1500);
+  </script>
 </body>
 </html>
